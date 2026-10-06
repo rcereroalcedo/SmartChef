@@ -18,7 +18,7 @@ public class Notificacion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, length = 30)
     private String tipo;
@@ -32,11 +32,8 @@ public class Notificacion {
     @Column(nullable = false)
     private LocalDateTime fecha;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "usuarios",
-            joinColumns = @JoinColumn(name = "id"),
-            inverseJoinColumns = @JoinColumn(name = "usuario_id")
-    )
-    private Set<Usuario> usuarios = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id", nullable = false)
+    private Usuario usuario;
+
 }
