@@ -25,7 +25,13 @@ public class Usuario {
     @Column(nullable = false, length = 20)
     private String rol;
 
-    @OneToMany(mappedBy = "notificación", fetch = FetchType.LAZY)
+    @Builder.Default
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notificacion> notificaciones = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UsuarioPreferencia> preferenciasUsuario = new ArrayList<>();
+
 
 }
