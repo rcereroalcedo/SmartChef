@@ -5,12 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "notificaciones")
+@Table(name = "listas_compra")
 @Getter @Setter @NoArgsConstructor
-public class Notificacion {
+public class ListaCompra {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,16 +21,10 @@ public class Notificacion {
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @Column(nullable = false, length = 30)
-    private String tipo;
+    @Column(nullable = false, length = 10)
+    private String estado;
 
-    @Column(nullable = false)
-    private Boolean leida = false;
-
-    @Column(nullable = false)
-    private LocalDateTime fecha;
-
-    @Column(nullable = false, length = 300)
-    private String texto;
+    @OneToMany(mappedBy = "lista", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LineaListaCompra> lineas = new ArrayList<>();
 }
 

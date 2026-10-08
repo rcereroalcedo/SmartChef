@@ -5,12 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "notificaciones")
+@Table(name = "colecciones")
 @Getter @Setter @NoArgsConstructor
-public class Notificacion {
+public class Coleccion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,16 +21,13 @@ public class Notificacion {
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @Column(nullable = false, length = 30)
-    private String tipo;
+    @Column(nullable = false, length = 80)
+    private String nombre;
 
-    @Column(nullable = false)
-    private Boolean leida = false;
-
-    @Column(nullable = false)
-    private LocalDateTime fecha;
-
-    @Column(nullable = false, length = 300)
-    private String texto;
+    @ManyToMany
+    @JoinTable(name = "colecciones_recetas",
+            joinColumns = @JoinColumn(name = "coleccion_id"),
+            inverseJoinColumns = @JoinColumn(name = "receta_id"))
+    private Set<Receta> recetas = new HashSet<>();
 }
 

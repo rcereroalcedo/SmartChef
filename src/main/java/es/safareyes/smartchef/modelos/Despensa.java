@@ -5,12 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "notificaciones")
+@Table(name = "despensa")
 @Getter @Setter @NoArgsConstructor
-public class Notificacion {
+public class Despensa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,16 +21,13 @@ public class Notificacion {
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @Column(nullable = false, length = 30)
-    private String tipo;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "ingrediente_id", nullable = false)
+    private Ingrediente ingrediente;
 
-    @Column(nullable = false)
-    private Boolean leida = false;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal cantidad;
 
-    @Column(nullable = false)
-    private LocalDateTime fecha;
-
-    @Column(nullable = false, length = 300)
-    private String texto;
+    private LocalDate caducidad; // nullable
 }
 
