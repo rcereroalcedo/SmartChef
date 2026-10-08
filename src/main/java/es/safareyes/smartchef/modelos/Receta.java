@@ -29,8 +29,9 @@ public class Receta {
     @Column(nullable = false)
     private Integer calorias;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private String dificultad;
+    private Dificultad dificultad;
 
     @Column(columnDefinition = "text")
     private String descripcion;

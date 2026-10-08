@@ -25,8 +25,9 @@ public class Ingrediente {
     @Column(name = "sin_gluten", nullable = false)
     private Boolean sinGluten = false;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo_cantidad", nullable = false, length = 15)
-    private String tipoCantidad;
+    private TipoCantidad tipoCantidad;
 
     @Column(nullable = false, precision = 10, scale = 4)
     private BigDecimal precio;

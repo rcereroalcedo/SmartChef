@@ -34,7 +34,8 @@ public class RegistroComida {
     @Column(nullable = false)
     private LocalDate fecha;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private String momento;
+    private MomentoComida momento;
 }
 

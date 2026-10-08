@@ -20,8 +20,9 @@ public class Notificacion {
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private String tipo;
+    private TipoNotificacion tipo;
 
     @Column(nullable = false)
     private Boolean leida = false;

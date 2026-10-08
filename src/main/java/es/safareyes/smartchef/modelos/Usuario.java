@@ -22,8 +22,9 @@ public class Usuario {
     @Column(nullable = false, length = 100)
     private String contrasena;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String rol;
+    private Rol rol = Rol.USUARIO;
 
     @ManyToMany
     @JoinTable(name = "usuarios_preferencias",
