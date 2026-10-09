@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public interface IDespensaRepository extends JpaRepository<Despensa, Long> {
+public interface IDespensaRepository extends JpaRepository<Despensa, Integer> {
 
     @Query("""
             SELECT new map(d.id AS id, i.id AS ingredienteId, i.nombre AS nombre,

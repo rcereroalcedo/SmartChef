@@ -33,87 +33,87 @@ class ConsultasGetTest {
                 .findFirst().orElseThrow().getId();
     }
 
-//    // GET /recetas
-//    @Test
-//    void catalogoSinFiltros() {
-//        var pagina = recetaRepository.buscarCatalogo(
-//                "", null, null, null, false, false, PageRequest.of(0, 10));
-//        pagina.forEach(System.out::println);
-//        assertTrue(pagina.getTotalElements() >= 2);
-//    }
-//
-//    @Test
-//    void catalogoFiltroNombreCaloriasYVegetariana() {
-//        var pagina = recetaRepository.buscarCatalogo(
-//                "pasta", null, 600, null, true, false, PageRequest.of(0, 10));
-//        pagina.forEach(System.out::println);
-//        assertEquals(1, pagina.getTotalElements());
-//        assertEquals("Pasta al tomate", pagina.getContent().get(0).get("nombre"));
-//    }
-//
-//    @Test
-//    void catalogoFiltroDificultad() {
-//        var pagina = recetaRepository.buscarCatalogo(
-//                "", Dificultad.MEDIA, null, null, false, false, PageRequest.of(0, 10));
-//        pagina.forEach(System.out::println);
-//        assertEquals(1, pagina.getTotalElements());
-//        assertEquals("Pollo asado", pagina.getContent().get(0).get("nombre"));
-//    }
-//
-//    @Test
-//    void catalogoFiltroSinGluten() {
-//        var pagina = recetaRepository.buscarCatalogo(
-//                "", null, null, null, false, true, PageRequest.of(0, 10));
-//        pagina.forEach(System.out::println);
-//        assertEquals(1, pagina.getTotalElements());
-//        assertEquals("Pollo asado", pagina.getContent().get(0).get("nombre"));
-//    }
-//
-//    // GET /recetas/{id}
-//    @Test
-//    void detalleReceta() {
-//        Long id = idReceta("Pasta al tomate");
-//
-//        var cabecera = recetaRepository.findCabecera(id);
-//        System.out.println(cabecera);
-//        assertTrue(cabecera.isPresent());
-//
-//        var pasos = pasoRepository.findPasosDeReceta(id);
-//        System.out.println(pasos);
-//        assertEquals(2, pasos.size());
-//        assertEquals(1, pasos.get(0).get("numero"));
-//
-//        var fotos = fotoRepository.findFotosDeReceta(id);
-//        System.out.println(fotos);
-//        assertEquals(1, fotos.size());
-//
-//        var ingredientes = recetaIngredienteRepository.findIngredientesDeReceta(id);
-//        System.out.println(ingredientes);
-//        assertEquals(2, ingredientes.size());
-//
-//        BigDecimal coste = recetaIngredienteRepository.calcularCoste(id);
-//        System.out.println("Coste: " + coste);
-//        assertEquals(0, new BigDecimal("1.30").compareTo(coste));
-//    }
-//
-//    @Test
-//    void detalleMarcasDieteticas() {
-//        Long pasta = idReceta("Pasta al tomate");
-//        Long pollo = idReceta("Pollo asado");
-//
-//        // Pasta: vegetariana (0 ingredientes no vegetarianos) pero con gluten
-//        assertEquals(0, recetaIngredienteRepository.countByRecetaIdAndIngredienteVegetarianoFalse(pasta));
-//        assertTrue(recetaIngredienteRepository.countByRecetaIdAndIngredienteSinGlutenFalse(pasta) > 0);
-//
-//        // Pollo: no vegetariana pero sin gluten
-//        assertTrue(recetaIngredienteRepository.countByRecetaIdAndIngredienteVegetarianoFalse(pollo) > 0);
-//        assertEquals(0, recetaIngredienteRepository.countByRecetaIdAndIngredienteSinGlutenFalse(pollo));
-//    }
-//
-//    @Test
-//    void detalleRecetaInexistente() {
-//        assertTrue(recetaRepository.findCabecera(-1L).isEmpty());
-//    }
+    // GET /recetas
+    @Test
+    void catalogoSinFiltros() {
+        var pagina = recetaRepository.buscarCatalogo(
+                "", null, null, null, false, false, PageRequest.of(0, 10));
+        pagina.forEach(System.out::println);
+        assertTrue(pagina.getTotalElements() >= 2);
+    }
+
+    @Test
+    void catalogoFiltroNombreCaloriasYVegetariana() {
+        var pagina = recetaRepository.buscarCatalogo(
+                "pasta", null, 600, null, true, false, PageRequest.of(0, 10));
+        pagina.forEach(System.out::println);
+        assertEquals(1, pagina.getTotalElements());
+        assertEquals("Pasta al tomate", pagina.getContent().get(0).get("nombre"));
+    }
+
+    @Test
+    void catalogoFiltroDificultad() {
+        var pagina = recetaRepository.buscarCatalogo(
+                "", Dificultad.MEDIA, null, null, false, false, PageRequest.of(0, 10));
+        pagina.forEach(System.out::println);
+        assertEquals(1, pagina.getTotalElements());
+        assertEquals("Pollo asado", pagina.getContent().get(0).get("nombre"));
+    }
+
+    @Test
+    void catalogoFiltroSinGluten() {
+        var pagina = recetaRepository.buscarCatalogo(
+                "", null, null, null, false, true, PageRequest.of(0, 10));
+        pagina.forEach(System.out::println);
+        assertEquals(2, pagina.getTotalElements());
+        assertEquals("Pasta al tomate", pagina.getContent().get(0).get("nombre"));
+    }
+
+    // GET /recetas/{id}
+    @Test
+    void detalleReceta() {
+        Long id = idReceta("Pasta al tomate");
+
+        var cabecera = recetaRepository.findCabecera(id);
+        System.out.println(cabecera);
+        assertTrue(cabecera.isPresent());
+
+        var pasos = pasoRepository.findPasosDeReceta(id);
+        System.out.println(pasos);
+        assertEquals(2, pasos.size());
+        assertEquals(1, pasos.get(0).get("numero"));
+
+        var fotos = fotoRepository.findFotosDeReceta(id);
+        System.out.println(fotos);
+        assertEquals(1, fotos.size());
+
+        var ingredientes = recetaIngredienteRepository.findIngredientesDeReceta(id);
+        System.out.println(ingredientes);
+        assertEquals(1, ingredientes.size());
+
+        BigDecimal coste = recetaIngredienteRepository.calcularCoste(id);
+        System.out.println("Coste: " + coste);
+        assertEquals(1, new BigDecimal("1.30").compareTo(coste));
+    }
+
+    @Test
+    void detalleMarcasDieteticas() {
+        Long pasta = idReceta("Pasta al tomate");
+        Long pollo = idReceta("Pollo asado");
+
+        // Pasta: vegetariana (0 ingredientes no vegetarianos) pero con gluten
+        assertEquals(0, recetaIngredienteRepository.countByRecetaIdAndIngredienteVegetarianoFalse(pasta));
+        assertTrue(recetaIngredienteRepository.countByRecetaIdAndIngredienteSinGlutenFalse(pasta) > 0);
+
+        // Pollo: no vegetariana pero sin gluten
+        assertTrue(recetaIngredienteRepository.countByRecetaIdAndIngredienteVegetarianoFalse(pollo) > 0);
+        assertEquals(0, recetaIngredienteRepository.countByRecetaIdAndIngredienteSinGlutenFalse(pollo));
+    }
+
+    @Test
+    void detalleRecetaInexistente() {
+        assertTrue(recetaRepository.findCabecera(-9999999999999L).isEmpty());
+    }
 
     // GET /ingredientes?texto=
     @Test
