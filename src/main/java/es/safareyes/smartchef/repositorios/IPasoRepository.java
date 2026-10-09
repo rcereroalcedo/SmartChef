@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public interface IPasoRepository extends JpaRepository<Paso, Integer> {
+public interface IPasoRepository extends JpaRepository<Paso, Long> {
     @Query("""
             SELECT new map(p.numero AS numero, p.descripcion AS descripcion)
             FROM Paso p

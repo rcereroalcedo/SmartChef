@@ -9,11 +9,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public interface IRecetaRepository extends JpaRepository<Receta, Integer> {
+public interface IRecetaRepository extends JpaRepository<Receta, Long> {
+
     @Query(value = """
             SELECT new map(r.id AS id, r.nombre AS nombre, r.raciones AS raciones,
                            r.tiempo AS tiempo, r.calorias AS calorias, r.dificultad AS dificultad,
@@ -53,12 +55,20 @@ public interface IRecetaRepository extends JpaRepository<Receta, Integer> {
                                              @Param("sinGluten") boolean sinGluten,
                                              Pageable pageable);
 
-    @Query("""
-            SELECT new map(r.id AS id, r.nombre AS nombre, r.raciones AS raciones,
-                           r.tiempo AS tiempo, r.calorias AS calorias,
-                           r.dificultad AS dificultad, r.descripcion AS descripcion)
-            FROM Receta r
-            WHERE r.id = :id
-            """)
-    Optional<Map<String, Object>> findCabecera(@Param("id") Long id);
+    @Query("SELECT r FROM Receta r WHERE r.id = :id")
+    Optional<Receta> findRecetaEntity(@Param("id") Long id);
+
+    default Optional<Map<String, Object>> findCabecera(Long id) {
+        return findRecetaEntity(id).map(r -> {
+            Map<String, Object> mapa = new HashMap<>();
+            mapa.put("id", r.getId());
+            mapa.put("nombre", r.getNombre());
+            mapa.put("raciones", r.getRaciones());
+            mapa.put("tiempo", r.getTiempo());
+            mapa.put("calorias", r.getCalorias());
+            mapa.put("dificultad", r.getDificultad());
+            mapa.put("descripcion", r.getDescripcion());
+            return mapa;
+        });
+    }
 }

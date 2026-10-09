@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public interface IRecetaIngredienteRepository extends JpaRepository<RecetaIngrediente, Integer> {
+public interface IRecetaIngredienteRepository extends JpaRepository<RecetaIngrediente, Long> {
     @Query("""
             SELECT new map(i.id AS id, i.nombre AS nombre, ri.cantidad AS cantidad,
                            i.tipoCantidad AS tipoCantidad, i.vegetariano AS vegetariano,

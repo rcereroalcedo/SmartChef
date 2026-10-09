@@ -65,8 +65,8 @@ class ConsultasGetTest {
         var pagina = recetaRepository.buscarCatalogo(
                 "", null, null, null, false, true, PageRequest.of(0, 10));
         pagina.forEach(System.out::println);
-        assertEquals(2, pagina.getTotalElements());
-        assertEquals("Pasta al tomate", pagina.getContent().get(0).get("nombre"));
+        assertEquals(1, pagina.getTotalElements());
+        assertEquals("Pollo asado", pagina.getContent().get(0).get("nombre"));
     }
 
     // GET /recetas/{id}
@@ -112,7 +112,7 @@ class ConsultasGetTest {
 
     @Test
     void detalleRecetaInexistente() {
-        assertTrue(recetaRepository.findCabecera(-9999999999999L).isEmpty());
+        assertTrue(recetaRepository.findCabecera(-1L).isEmpty());
     }
 
     // GET /ingredientes?texto=

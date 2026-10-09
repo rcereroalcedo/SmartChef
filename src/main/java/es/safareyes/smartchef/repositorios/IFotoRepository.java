@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public interface IFotoRepository extends JpaRepository<Foto, Integer> {
+public interface IFotoRepository extends JpaRepository<Foto, Long> {
     @Query("""
             SELECT new map(f.url AS url, f.esPortada AS esPortada)
             FROM Foto f
