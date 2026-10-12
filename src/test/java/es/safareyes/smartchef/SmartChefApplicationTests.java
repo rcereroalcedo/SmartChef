@@ -101,18 +101,30 @@ class ConsultasGetTest {
         Long pasta = idReceta("Pasta al tomate");
         Long pollo = idReceta("Pollo asado");
 
-        // Pasta: vegetariana (0 ingredientes no vegetarianos) pero con gluten
-        assertEquals(0, recetaIngredienteRepository.countByRecetaIdAndIngredienteVegetarianoFalse(pasta));
-        assertTrue(recetaIngredienteRepository.countByRecetaIdAndIngredienteSinGlutenFalse(pasta) > 0);
+        long noVeggiePasta = recetaIngredienteRepository.countByRecetaIdAndIngredienteVegetarianoFalse(pasta);
+        long conGlutenPasta = recetaIngredienteRepository.countByRecetaIdAndIngredienteSinGlutenFalse(pasta);
 
-        // Pollo: no vegetariana pero sin gluten
-        assertTrue(recetaIngredienteRepository.countByRecetaIdAndIngredienteVegetarianoFalse(pollo) > 0);
-        assertEquals(0, recetaIngredienteRepository.countByRecetaIdAndIngredienteSinGlutenFalse(pollo));
+        long noVeggiePollo = recetaIngredienteRepository.countByRecetaIdAndIngredienteVegetarianoFalse(pollo);
+        long conGlutenPollo = recetaIngredienteRepository.countByRecetaIdAndIngredienteSinGlutenFalse(pollo);
+
+        // Imprimimos los contadores en consola
+        System.out.println("Pasta -> No vegetarianos: " + noVeggiePasta + " | Con gluten: " + conGlutenPasta);
+        System.out.println("Pollo -> No vegetarianos: " + noVeggiePollo + " | Con gluten: " + conGlutenPollo);
+
+        // Aserciones
+        assertEquals(0, noVeggiePasta);
+        assertTrue(conGlutenPasta > 0);
+        assertTrue(noVeggiePollo > 0);
+        assertEquals(0, conGlutenPollo);
     }
 
     @Test
     void detalleRecetaInexistente() {
-        assertTrue(recetaRepository.findCabecera(-1L).isEmpty());
+        var resultado = recetaRepository.findCabecera(-1L);
+
+        System.out.println("Resultado para ID -1: " + resultado);
+
+        assertTrue(resultado.isEmpty());
     }
 
     // GET /ingredientes?texto=
@@ -126,6 +138,7 @@ class ConsultasGetTest {
     @Test
     void catalogoIngredientesSinTextoDevuelveTodos() {
         var pagina = ingredienteRepository.findByNombreContainingIgnoreCase("", PageRequest.of(0, 10));
+        pagina.forEach(System.out::println);
         assertTrue(pagina.getTotalElements() >= 3);
     }
 
