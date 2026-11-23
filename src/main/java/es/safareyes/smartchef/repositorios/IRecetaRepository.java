@@ -9,20 +9,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Repository
 public interface IRecetaRepository extends JpaRepository<Receta, Long> {
 
-    @Query(value = """
-            SELECT new map(r.id AS id, r.nombre AS nombre, r.raciones AS raciones,
-                           r.tiempo AS tiempo, r.calorias AS calorias, r.dificultad AS dificultad,
-                           (SELECT MIN(f.url) FROM Foto f
-                            WHERE f.receta = r AND f.esPortada = TRUE) AS fotoPortada)
-            FROM Receta r
-            WHERE LOWER(r.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))
+    @Query("""
+            SELECT r FROM Receta r
+            WHERE r.activa = TRUE
+              AND LOWER(r.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))
               AND (:dificultad IS NULL OR r.dificultad = :dificultad)
               AND (:caloriasMax IS NULL OR r.calorias <= :caloriasMax)
               AND (:tiempoMax IS NULL OR r.tiempo <= :tiempoMax)
@@ -32,43 +28,31 @@ public interface IRecetaRepository extends JpaRepository<Receta, Long> {
               AND (:sinGluten = FALSE OR NOT EXISTS (
                     SELECT 1 FROM RecetaIngrediente ri
                     WHERE ri.receta = r AND ri.ingrediente.sinGluten = FALSE))
-            ORDER BY r.nombre
-            """,
-            countQuery = """
-            SELECT COUNT(r) FROM Receta r
-            WHERE LOWER(r.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))
-              AND (:dificultad IS NULL OR r.dificultad = :dificultad)
-              AND (:caloriasMax IS NULL OR r.calorias <= :caloriasMax)
-              AND (:tiempoMax IS NULL OR r.tiempo <= :tiempoMax)
-              AND (:vegetariana = FALSE OR NOT EXISTS (
-                    SELECT 1 FROM RecetaIngrediente ri
-                    WHERE ri.receta = r AND ri.ingrediente.vegetariano = FALSE))
-              AND (:sinGluten = FALSE OR NOT EXISTS (
-                    SELECT 1 FROM RecetaIngrediente ri
-                    WHERE ri.receta = r AND ri.ingrediente.sinGluten = FALSE))
+              AND (:rapida = FALSE OR r.tiempo <= :tiempoRapido)
+              AND (:economica = FALSE OR :costeMaxRacion * r.raciones >= (
+                    SELECT COALESCE(SUM(x.cantidad * x.ingrediente.precio), 0.0)
+                    FROM RecetaIngrediente x WHERE x.receta = r))
             """)
-    Page<Map<String, Object>> buscarCatalogo(@Param("nombre") String nombre,
-                                             @Param("dificultad") Dificultad dificultad,
-                                             @Param("caloriasMax") Integer caloriasMax,
-                                             @Param("tiempoMax") Integer tiempoMax,
-                                             @Param("vegetariana") boolean vegetariana,
-                                             @Param("sinGluten") boolean sinGluten,
-                                             Pageable pageable);
+    Page<Receta> buscarCatalogo(@Param("nombre") String nombre,
+                                @Param("dificultad") Dificultad dificultad,
+                                @Param("caloriasMax") Integer caloriasMax,
+                                @Param("tiempoMax") Integer tiempoMax,
+                                @Param("vegetariana") boolean vegetariana,
+                                @Param("sinGluten") boolean sinGluten,
+                                @Param("rapida") boolean rapida,
+                                @Param("tiempoRapido") int tiempoRapido,
+                                @Param("economica") boolean economica,
+                                @Param("costeMaxRacion") BigDecimal costeMaxRacion,
+                                Pageable pageable);
 
-    @Query("SELECT r FROM Receta r WHERE r.id = :id")
-    Optional<Receta> findRecetaEntity(@Param("id") Long id);
+    // Detalle: trae la receta con sus ingredientes en una sola consulta (evita N+1)
+    @Query("""
+            SELECT r FROM Receta r
+            LEFT JOIN FETCH r.ingredientes ri
+            LEFT JOIN FETCH ri.ingrediente
+            WHERE r.id = :id AND r.activa = TRUE
+            """)
+    Optional<Receta> buscarActivaConIngredientes(@Param("id") Long id);
 
-    default Optional<Map<String, Object>> findCabecera(Long id) {
-        return findRecetaEntity(id).map(r -> {
-            Map<String, Object> mapa = new HashMap<>();
-            mapa.put("id", r.getId());
-            mapa.put("nombre", r.getNombre());
-            mapa.put("raciones", r.getRaciones());
-            mapa.put("tiempo", r.getTiempo());
-            mapa.put("calorias", r.getCalorias());
-            mapa.put("dificultad", r.getDificultad());
-            mapa.put("descripcion", r.getDescripcion());
-            return mapa;
-        });
-    }
+    Optional<Receta> findByIdAndActivaTrue(Long id);
 }

@@ -77,4 +77,9 @@ public class ManejadorGlobalErrores {
         problema.setProperty("timestamp", LocalDateTime.now());
         return problema;
     }
+
+    @ExceptionHandler(AccesoDenegadoException.class)
+    public ProblemDetail accesoDenegado(AccesoDenegadoException e) {
+        return construir(HttpStatus.FORBIDDEN, "Acción no permitida", e.getMessage());
+    }
 }

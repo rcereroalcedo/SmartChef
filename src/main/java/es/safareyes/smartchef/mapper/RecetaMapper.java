@@ -27,16 +27,16 @@ public interface RecetaMapper {
     @Mapping(target = "fotoPortada", source = "fotos", qualifiedByName = "urlPortada")  // calculado
     RecetaResumenResponse toResumen(Receta receta);
 
-    List<RecetaResumenResponse> toResumenList(List<Receta> recetas);             // colección
+    List<RecetaResumenResponse> toResumenList(List<Receta> recetas);
 
-    @Mapping(target = "autor", source = "autor.nombre")
-    @Mapping(target = "costeTotal", ignore = true)       // los calcula el servicio
+    @Mapping(target = "costeTotal", ignore = true)
     @Mapping(target = "costePorRacion", ignore = true)
     @Mapping(target = "vegetariana", ignore = true)
     @Mapping(target = "sinGluten", ignore = true)
     @Mapping(target = "rapida", ignore = true)
     @Mapping(target = "economica", ignore = true)
-    RecetaDetalleResponse toDetalle(Receta receta);
+    @Mapping(target = "autor", source = "receta.autor.nombre")
+    RecetaDetalleResponse toDetalle(Receta receta, CalculoReceta calculo);
 
     @Mapping(target = "ingredienteId", source = "ingrediente.id")
     @Mapping(target = "nombre", source = "ingrediente.nombre")
