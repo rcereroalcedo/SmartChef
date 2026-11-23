@@ -44,5 +44,12 @@ public class Receta {
 
     @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecetaIngrediente> ingredientes = new ArrayList<>();
+
+    @Column(nullable = false)
+    private Boolean activa = true;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "autor_id", nullable = false)
+    private Usuario autor;
 }
 
