@@ -37,9 +37,11 @@ public class Receta {
     private String descripcion;
 
     @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("numero ASC")
     private List<Paso> pasos = new ArrayList<>();
 
     @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("esPortada DESC, id ASC")
     private List<Foto> fotos = new ArrayList<>();
 
     @OneToMany(mappedBy = "receta", cascade = CascadeType.ALL, orphanRemoval = true)
