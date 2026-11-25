@@ -1,3 +1,5 @@
 package es.safareyes.smartchef.modelos;
 
-public enum EstadoListaCompra { ACTIVA, COMPLETADA }
+public enum EstadoListaCompra {
+    ABIERTA, CERRADA
+}

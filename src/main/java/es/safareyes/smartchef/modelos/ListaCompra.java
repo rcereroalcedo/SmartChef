@@ -23,7 +23,7 @@ public class ListaCompra {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)
-    private EstadoListaCompra estado = EstadoListaCompra.ACTIVA;
+    private EstadoListaCompra estado = EstadoListaCompra.ABIERTA;
 
     @OneToMany(mappedBy = "lista", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LineaListaCompra> lineas = new ArrayList<>();
