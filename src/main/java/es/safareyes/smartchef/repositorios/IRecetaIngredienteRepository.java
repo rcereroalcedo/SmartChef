@@ -6,32 +6,28 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public interface IRecetaIngredienteRepository extends JpaRepository<RecetaIngrediente, Long> {
+
+    // RN-04: solo recetas de las que se tiene MÁS de la mitad de los ingredientes
     @Query("""
-            SELECT new map(i.id AS id, i.nombre AS nombre, ri.cantidad AS cantidad,
-                           i.tipoCantidad AS tipoCantidad, i.vegetariano AS vegetariano,
-                           i.sinGluten AS sinGluten, ri.cantidad * i.precio AS coste)
+            SELECT ri.receta.id AS recetaId,
+                   COUNT(ri) AS total,
+                   SUM(CASE WHEN ri.ingrediente.id IN :disponibles THEN 1 ELSE 0 END) AS tengo
             FROM RecetaIngrediente ri
-            JOIN ri.ingrediente i
-            WHERE ri.receta.id = :recetaId
-            ORDER BY i.nombre
+            WHERE ri.receta.activa = TRUE
+            GROUP BY ri.receta.id
+            HAVING SUM(CASE WHEN ri.ingrediente.id IN :disponibles THEN 1 ELSE 0 END) * 2 > COUNT(ri)
             """)
-    List<Map<String, Object>> findIngredientesDeReceta(@Param("recetaId") Long recetaId);
+    List<CoincidenciaView> buscarCoincidencias(@Param("disponibles") Collection<Long> disponibles);
 
     @Query("""
-            SELECT COALESCE(SUM(ri.cantidad * i.precio), 0)
-            FROM RecetaIngrediente ri
-            JOIN ri.ingrediente i
-            WHERE ri.receta.id = :recetaId
+            SELECT ri FROM RecetaIngrediente ri
+            JOIN FETCH ri.ingrediente
+            WHERE ri.receta.id IN :recetaIds
             """)
-    BigDecimal calcularCoste(@Param("recetaId") Long recetaId);
-
-    long countByRecetaIdAndIngredienteVegetarianoFalse(Long recetaId);
-
-    long countByRecetaIdAndIngredienteSinGlutenFalse(Long recetaId);
+    List<RecetaIngrediente> findConIngredientes(@Param("recetaIds") Collection<Long> recetaIds);
 }
