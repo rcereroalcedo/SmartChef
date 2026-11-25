@@ -28,6 +28,7 @@ public class Coleccion {
     @JoinTable(name = "colecciones_recetas",
             joinColumns = @JoinColumn(name = "coleccion_id"),
             inverseJoinColumns = @JoinColumn(name = "receta_id"))
+    @OrderBy("nombre ASC")
     private Set<Receta> recetas = new HashSet<>();
 }
 
