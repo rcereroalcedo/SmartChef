@@ -6,20 +6,28 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @Repository
 public interface IDespensaRepository extends JpaRepository<Despensa, Long> {
 
     @Query("""
-            SELECT new map(d.id AS id, i.id AS ingredienteId, i.nombre AS nombre,
-                           i.tipoCantidad AS tipoCantidad, d.cantidad AS cantidad,
-                           d.caducidad AS caducidad)
-            FROM Despensa d
-            JOIN d.ingrediente i
+            SELECT d FROM Despensa d
+            JOIN FETCH d.ingrediente i
             WHERE d.usuario.id = :usuarioId
             ORDER BY d.caducidad ASC NULLS LAST, i.nombre ASC
             """)
-    List<Map<String, Object>> findDespensaOrdenada(@Param("usuarioId") Long usuarioId);
+    List<Despensa> findDespensaOrdenada(@Param("usuarioId") Long usuarioId);
+
+    Optional<Despensa> findByUsuarioIdAndIngredienteId(Long usuarioId, Long ingredienteId);
+
+    @Query("""
+            SELECT d FROM Despensa d
+            JOIN FETCH d.ingrediente
+            WHERE d.usuario.id = :usuarioId
+              AND (d.caducidad IS NULL OR d.caducidad >= :hoy)
+            """)
+    List<Despensa> findNoCaducados(@Param("usuarioId") Long usuarioId, @Param("hoy") LocalDate hoy);
 }
