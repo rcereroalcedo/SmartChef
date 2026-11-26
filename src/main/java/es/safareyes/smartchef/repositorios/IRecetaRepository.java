@@ -29,8 +29,8 @@ public interface IRecetaRepository extends JpaRepository<Receta, Long> {
                     SELECT 1 FROM RecetaIngrediente ri
                     WHERE ri.receta = r AND ri.ingrediente.sinGluten = FALSE))
               AND (:rapida = FALSE OR r.tiempo <= :tiempoRapido)
-              AND (:economica = FALSE OR :costeMaxRacion * r.raciones >= (
-                    SELECT COALESCE(SUM(x.cantidad * x.ingrediente.precio), 0.0)
+              AND (:economica = FALSE OR :costeMaxRacion * CAST(r.raciones AS BigDecimal) >= (
+                    SELECT COALESCE(SUM(x.cantidad * x.ingrediente.precio), CAST(0 AS BigDecimal))
                     FROM RecetaIngrediente x WHERE x.receta = r))
             """)
     Page<Receta> buscarCatalogo(@Param("nombre") String nombre,
@@ -45,7 +45,6 @@ public interface IRecetaRepository extends JpaRepository<Receta, Long> {
                                 @Param("costeMaxRacion") BigDecimal costeMaxRacion,
                                 Pageable pageable);
 
-    // Detalle: trae la receta con sus ingredientes en una sola consulta (evita N+1)
     @Query("""
             SELECT r FROM Receta r
             LEFT JOIN FETCH r.ingredientes ri
