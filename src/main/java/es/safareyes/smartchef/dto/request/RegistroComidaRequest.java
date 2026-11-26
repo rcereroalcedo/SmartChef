@@ -20,5 +20,11 @@ public record RegistroComidaRequest(
         @Size(max = 200, message = "La descripción no puede pasar de 200 caracteres")
         String descripcion,
 
-        boolean descontarDespensa
-) { }
+        Boolean descontarDespensa
+) {
+        public RegistroComidaRequest {
+                if (descontarDespensa == null) {
+                        descontarDespensa = false;
+                }
+        }
+}
