@@ -107,10 +107,10 @@ public class RecetaServiceImpl implements RecetaService {
         if (request.pasos() != null) {
             sustituirPasos(receta, request.pasos());
         }
-        receta.setCalorias(calcularCaloriasPorRacion(receta)); // raciones o ingredientes pueden haber cambiado
+        receta.setCalorias(calcularCaloriasPorRacion(receta));
 
         log.info("Receta {} actualizada por el usuario {}", id, usuarioId);
-        return construirDetalle(receta);                     // la entidad ya está gestionada: no hace falta save
+        return construirDetalle(receta);
     }
 
     @Override
@@ -126,7 +126,6 @@ public class RecetaServiceImpl implements RecetaService {
 
     // ---------- Reglas de negocio y apoyo ----------
 
-    /** RN-10: solo el autor o un administrador. */
     private void comprobarPermiso(Receta receta, Long usuarioId) {
         Usuario usuario = buscarUsuario(usuarioId);
         boolean esAutor = receta.getAutor().getId().equals(usuarioId);
@@ -135,7 +134,6 @@ public class RecetaServiceImpl implements RecetaService {
         }
     }
 
-    /** RN-01: sin ingredientes repetidos y todos del catálogo. */
     private void sustituirIngredientes(Receta receta, List<IngredienteCantidadRequest> lineas) {
         Set<Long> ids = new HashSet<>();
         for (IngredienteCantidadRequest linea : lineas) {
@@ -148,7 +146,7 @@ public class RecetaServiceImpl implements RecetaService {
         Map<Long, Ingrediente> catalogo = ingredienteRepository.findAllById(ids).stream()
                 .collect(Collectors.toMap(Ingrediente::getId, Function.identity()));
 
-        receta.getIngredientes().clear();                    // orphanRemoval borra las líneas anteriores
+        receta.getIngredientes().clear();
         for (IngredienteCantidadRequest linea : lineas) {
             Ingrediente ingrediente = catalogo.get(linea.ingredienteId());
             if (ingrediente == null) {
@@ -172,7 +170,6 @@ public class RecetaServiceImpl implements RecetaService {
         }
     }
 
-    /** RN-02: calorías por ración, a partir de los ingredientes. */
     private int calcularCaloriasPorRacion(Receta receta) {
         BigDecimal total = receta.getIngredientes().stream()
                 .map(ri -> ri.getCantidad().multiply(ri.getIngrediente().getCalorias()))
@@ -180,7 +177,6 @@ public class RecetaServiceImpl implements RecetaService {
         return total.divide(BigDecimal.valueOf(receta.getRaciones()), 0, RoundingMode.HALF_UP).intValue();
     }
 
-    /** RN-02: coste y preferencias, calculados y no guardados. */
     private CalculoReceta calcular(Receta receta) {
         BigDecimal coste = receta.getIngredientes().stream()
                 .map(ri -> ri.getCantidad().multiply(ri.getIngrediente().getPrecio()))

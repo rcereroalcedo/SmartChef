@@ -23,18 +23,18 @@ public interface RecetaMapper {
 
     // ---------- Entidad -> Response ----------
 
-    @Mapping(target = "autor", source = "autor.nombre")                          // aplanado
+    @Mapping(target = "autor", source = "autor.nombre")
     @Mapping(target = "fotoPortada", source = "fotos", qualifiedByName = "urlPortada")  // calculado
     RecetaResumenResponse toResumen(Receta receta);
 
     List<RecetaResumenResponse> toResumenList(List<Receta> recetas);
 
-    @Mapping(target = "costeTotal", ignore = true)
-    @Mapping(target = "costePorRacion", ignore = true)
-    @Mapping(target = "vegetariana", ignore = true)
-    @Mapping(target = "sinGluten", ignore = true)
-    @Mapping(target = "rapida", ignore = true)
-    @Mapping(target = "economica", ignore = true)
+    @Mapping(target = "costeTotal", source = "calculo.costeTotal")
+    @Mapping(target = "costePorRacion", source = "calculo.costePorRacion")
+    @Mapping(target = "vegetariana", source = "calculo.vegetariana")
+    @Mapping(target = "sinGluten", source = "calculo.sinGluten")
+    @Mapping(target = "rapida", source = "calculo.rapida")
+    @Mapping(target = "economica", source = "calculo.economica")
     @Mapping(target = "autor", source = "receta.autor.nombre")
     RecetaDetalleResponse toDetalle(Receta receta, CalculoReceta calculo);
 
